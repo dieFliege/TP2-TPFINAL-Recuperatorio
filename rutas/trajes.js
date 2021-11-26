@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Se importan los modelos del traje y de la categoría  
-const {Traje} = require('../modelos/traje'); 
+const {Traje, validar} = require('../modelos/traje'); 
 const {Categoria} = require('../modelos/categoria');
 
 // Mensajes 
@@ -17,49 +17,59 @@ router.get('/', async (req, res) => {
 
 // Endpoint para método POST de HTTP (agrega un traje)
 router.post('/', async (req, res) => {
-    const categoria = await Categoria.findById(req.body.categoriaId);
-    if (categoria){
-      const traje = new Traje({ 
-          nombre: req.body.nombre,
-          primeraAparicion: req.body.primeraAparicion,
-          anioAparicion: req.body.anioAparicion,
-          descripcion: req.body.descripcion,
-          poster: req.body.poster,
-          categoria: {
-            _id: categoria._id,
-            nombre: categoria.nombre
-          }
-        });
-        await traje.save();
-        res.send(traje);
+    const { error } = validar(req.body);
+    if(!error){
+        const categoria = await Categoria.findById(req.body.categoriaId);
+        if (categoria){
+            const traje = new Traje({ 
+                nombre: req.body.nombre,
+                primeraAparicion: req.body.primeraAparicion,
+                anioAparicion: req.body.anioAparicion,
+                descripcion: req.body.descripcion,
+                poster: req.body.poster,
+                categoria: {
+                    _id: categoria._id,
+                    nombre: categoria.nombre
+                }
+            });
+            await traje.save();
+            res.send(traje);
+        } else {
+            res.status(400).send(CATEGORIA_INVALIDA);
+        }
     } else {
-      res.status(400).send(CATEGORIA_INVALIDA);
+        res.status(400).send(error.details[0].message);
     }
 });
 
 // Endpoint para método PUT de HTTP (actualiza los datos del traje cuyo ID se indique)
 router.put('/:id', async (req, res) => {
-    const categoria = await Categoria.findById(req.body.categoriaId);
-    if(categoria){
-        const traje = await Traje.findByIdAndUpdate(req.params.id, 
-        {
-            nombre: req.body.nombre,
-            primeraAparicion: req.body.primeraAparicion,
-            anioAparicion: req.body.anioAparicion,
-            descripcion: req.body.descripcion,
-            poster: req.body.poster,
-            categoria: {
-              _id: categoria._id,
-              nombre: categoria.nombre
+    const { error } = validar(req.body);
+    if(!error){
+        const categoria = await Categoria.findById(req.body.categoriaId);
+        if(categoria){
+            const traje = await Traje.findByIdAndUpdate(req.params.id, 
+            {
+                nombre: req.body.nombre,
+                primeraAparicion: req.body.primeraAparicion,
+                anioAparicion: req.body.anioAparicion,
+                descripcion: req.body.descripcion,
+                poster: req.body.poster,
+                categoria: {
+                  _id: categoria._id,
+                  nombre: categoria.nombre
+                }
+            }, {new: true});
+            if(traje){ 
+                res.send(traje); 
+            } else {
+                res.status(404).send(TRAJE_NO_EXISTE);
             }
-        }, {new: true});
-        if(traje){ 
-            res.send(traje); 
         } else {
-            res.status(404).send(TRAJE_NO_EXISTE);
+            res.status(400).send(CATEGORIA_INVALIDA);
         }
     } else {
-        res.status(400).send(CATEGORIA_INVALIDA);
+        res.status(400).send(error.details[0].message);
     }
 });
 

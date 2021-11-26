@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Se importan los modelos del canje, el traje y del jugador  
-const {Canje, fechaDeCanje} = require('../modelos/canje'); 
+const {Canje, fechaDeCanje, validar} = require('../modelos/canje'); 
 const {Traje} = require('../modelos/traje'); 
 const {Jugador} = require('../modelos/jugador'); 
 
@@ -19,6 +19,8 @@ router.get('/', async (req, res) => {
 
 // Endpoint para método POST de HTTP (agrega un canje)
 router.post('/', async (req, res) => {
+  const { error } = validar(req.body);
+  if(!error){
     const jugador = await Jugador.findById(req.body.jugadorId);
     if (jugador){
       const traje = await Traje.findById(req.body.trajeId);
@@ -42,6 +44,9 @@ router.post('/', async (req, res) => {
     } else {
         res.status(400).send(JUGADOR_INVALIDO);
     }
+  } else {
+    res.status(400).send(error.details[0].message);
+  }
 });
 
 // Endpoint para método GET de HTTP (lista a un solo canje, determinado por el ID que se indique)

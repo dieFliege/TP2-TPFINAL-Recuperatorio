@@ -1,3 +1,5 @@
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const mongoose = require('mongoose');
 
 /**
@@ -50,6 +52,28 @@ const esquemaTraje = new mongoose.Schema({
 // Modelo que define a la entidad del traje 
 const Traje = mongoose.model('Traje', esquemaTraje);
 
-// Se disponibiliza la exportación del esquema y modelo del traje 
+// Método para validar los datos del traje que se ingresa
+function validarTraje(traje){
+    const esquemaValido = Joi.object({
+        nombre: Joi.string().min(1).max(32).required(),
+        primeraAparicion: Joi.string().min(1).max(64).required(),
+        anioAparicion: Joi.string().min(4).max(4).required(),
+        descripcion: Joi.string().max(1024).required(),
+        poster: Joi.string().max(255).required(),
+        categoria: Joi.objectId().required()
+      });
+    
+      return esquemaValido.validate({ 
+          nombre: traje.nombre, 
+          primeraAparicion: traje.primeraAparicion,  
+          anioAparicion: traje.anioAparicion,
+          descripcion: traje.descripcion,
+          poster: traje.poster,
+          categoriaId: traje.categoriaId
+        });
+}
+
+// Se disponibiliza la exportación del esquema y modelo del traje y el método de validación
 exports.esquemaTraje = esquemaTraje;
 exports.Traje = Traje;
+exports.validar = validarTraje;

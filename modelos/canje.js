@@ -1,3 +1,5 @@
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const mongoose = require('mongoose');
 
 // Esquema del canje 
@@ -43,6 +45,17 @@ function fechaDeCanje() {
   return fecha;
 }
 
+// Método para validar los datos del canje que se ingresa
+function validarCanje(canje){
+  const esquemaValido = Joi.object({
+    jugadorId: Joi.objectId().required(),
+    trajeId: Joi.objectId().required()
+  });
+
+  return esquemaValido.validate({ jugadorId: canje.jugadorId, trajeId: canje.trajeId });
+}
+
 // Se disponibiliza la exportación del modelo del canje 
 exports.Canje = Canje;
 exports.fechaDeCanje = fechaDeCanje;
+exports.validar = validarCanje;

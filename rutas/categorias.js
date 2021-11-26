@@ -5,7 +5,7 @@ const router = express.Router();
 const CATEGORIA_NO_EXISTE = 'No existe ninguna categoría con el ID brindado.';
 
 // Se importa el modelo de la categoría  
-const {Categoria} = require('../modelos/categoria');
+const {Categoria, validar} = require('../modelos/categoria');
 
 // Endpoint para método GET de HTTP (lista a todos las categorías) 
 router.get('/', async (req, res) => {
@@ -15,21 +15,31 @@ router.get('/', async (req, res) => {
 
 // Endpoint para método POST de HTTP (agrega una categoría)
 router.post('/', async (req, res) => {
+  const { error } = validar(req.body);
+  if(!error){
     let categoria = new Categoria({ nombre: req.body.nombre });
     categoria = await categoria.save();
     res.send(categoria);
+  } else {
+    res.status(400).send(error.details[0].message);
+  }
 });
 
 // Endpoint para método PUT de HTTP (actualiza los datos de la categoría cuyo ID se indique)
 router.put('/:id', async (req, res) => {
+  const { error } = validar(req.body);
+  if(!error){
     const categoria = await Categoria.findByIdAndUpdate(req.params.id, { nombre: req.body.nombre }, {
-        new: true
-      });
-      if (categoria){
-        res.send(categoria);      
-      } else {
-        res.status(404).send(CATEGORIA_NO_EXISTE);
-      }
+      new: true
+    });
+    if (categoria){
+      res.send(categoria);
+    } else {
+      res.status(404).send(CATEGORIA_NO_EXISTE);
+    }
+  } else {
+    res.status(400).send(error.details[0].message);
+  }
 });
 
 // Endpoint para método DELETE de HTTP (remueve a la categoría cuyo ID se indique)

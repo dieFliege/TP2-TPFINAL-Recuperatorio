@@ -1,3 +1,4 @@
+const Joi = require('joi');
 const mongoose = require('mongoose');
 
 const MIN_PUNTOS = 0;
@@ -28,6 +29,18 @@ const esquemaJugador = new mongoose.Schema({
 // Modelo que define a la entidad del jugador 
 const Jugador = mongoose.model('Jugador', esquemaJugador);
 
-// Se disponibiliza la exportación del esquema y modelo del jugador 
+// Método para validar los datos del jugador que se ingresa 
+function validarJugador(jugador) {
+    const esquemaValido = Joi.object({
+        alias: Joi.string().min(5).max(32).required(),
+        contrasenia: Joi.string().min(5).max(255).required(),
+        puntos: Joi.number().min(MIN_PUNTOS).max(MAX_PUNTOS).required(),
+    });
+  
+    return esquemaValido.validate({ alias: jugador.alias, contrasenia: jugador.contrasenia, puntos: jugador.puntos });
+  }
+
+// Se disponibiliza la exportación del esquema, del modelo del jugador y el método de validación 
 exports.esquemaJugador = esquemaJugador;
 exports.Jugador = Jugador;
+exports.validar = validarJugador;
