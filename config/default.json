@@ -1,0 +1,4 @@
+{
+    "claveJWT": "",
+    "db": "mongodb://localhost/spiderSuits"
+}

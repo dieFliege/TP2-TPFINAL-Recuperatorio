@@ -1,3 +1,5 @@
+const config = require('config');
+const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 const mongoose = require('mongoose');
 
@@ -10,7 +12,8 @@ const esquemaJugador = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 5,
-        maxlength: 32
+        maxlength: 32,
+        unique: true
     },
     contrasenia: {
         type: String,
@@ -26,6 +29,11 @@ const esquemaJugador = new mongoose.Schema({
     }
 });
 
+// Método para generar un JWT en el momento que el administrador se autentique en la aplicación  
+esquemaJugador.methods.generateAuthToken = function() { 
+    return jwt.sign({ _id: this._id }, config.get('claveJWT'));
+}
+
 // Modelo que define a la entidad del jugador 
 const Jugador = mongoose.model('Jugador', esquemaJugador);
 
@@ -33,12 +41,10 @@ const Jugador = mongoose.model('Jugador', esquemaJugador);
 function validarJugador(jugador) {
     const esquemaValido = Joi.object({
         alias: Joi.string().min(5).max(32).required(),
-        contrasenia: Joi.string().min(5).max(255).required(),
-        puntos: Joi.number().min(MIN_PUNTOS).max(MAX_PUNTOS).required(),
+        contrasenia: Joi.string().min(5).max(255).required()
     });
-  
-    return esquemaValido.validate({ alias: jugador.alias, contrasenia: jugador.contrasenia, puntos: jugador.puntos });
-  }
+    return esquemaValido.validate({ alias: jugador.alias, contrasenia: jugador.contrasenia });
+}
 
 // Se disponibiliza la exportación del esquema, del modelo del jugador y el método de validación 
 exports.esquemaJugador = esquemaJugador;
