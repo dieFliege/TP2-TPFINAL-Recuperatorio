@@ -1,4 +1,5 @@
 const autenticacionAdministrador = require('../middleware/autenticacionAdministrador');
+const validacionID = require('../middleware/validacionID');
 const express = require('express');
 const router = express.Router();
 
@@ -45,7 +46,7 @@ router.post('/', autenticacionAdministrador, async (req, res) => {
 });
 
 // Endpoint para método PUT de HTTP (actualiza los datos del traje cuyo ID se indique)
-router.put('/:id', autenticacionAdministrador, async (req, res) => {
+router.put('/:id', [autenticacionAdministrador, validacionID], async (req, res) => {
     const { error } = validar(req.body);
     if(!error){
         const categoria = await Categoria.findById(req.body.categoriaId);
@@ -76,7 +77,7 @@ router.put('/:id', autenticacionAdministrador, async (req, res) => {
 });
 
 // Endpoint para método DELETE de HTTP (remueve al traje cuyo ID se indique)
-router.delete('/:id', autenticacionAdministrador, async (req, res) => {
+router.delete('/:id', [autenticacionAdministrador, validacionID], async (req, res) => {
     const traje = await Traje.findByIdAndRemove(req.params.id);
     if(traje){
         res.send(traje);
@@ -86,7 +87,7 @@ router.delete('/:id', autenticacionAdministrador, async (req, res) => {
 });
 
 // Endpoint para método GET de HTTP (lista a un solo traje, determinado por el ID que se indique)
-router.get('/:id', async (req, res) => {
+router.get('/:id', validacionID, async (req, res) => {
     const traje = await Traje.findById(req.params.id);
     if(traje){
         res.send(traje);

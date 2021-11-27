@@ -2,6 +2,7 @@ const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const autenticacionAdministrador = require('../middleware/autenticacionAdministrador');
 const autenticacionJugador = require('../middleware/autenticacionJugador');
+const validacionID = require('../middleware/validacionID');
 const express = require('express');
 const router = express.Router();
 
@@ -56,7 +57,7 @@ router.post('/', autenticacionJugador, async (req, res) => {
 });
 
 // Endpoint para método GET de HTTP (lista a un solo canje, determinado por el ID que se indique)
-router.get('/:id', autenticacionAdministrador, async (req, res) => {
+router.get('/:id', [autenticacionAdministrador, validacionID], async (req, res) => {
     const canje = await Canje.findById(req.params.id);
     if (canje){
       res.send(canje);

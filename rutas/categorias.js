@@ -1,4 +1,5 @@
 const autenticacionAdministrador = require('../middleware/autenticacionAdministrador');
+const validacionID = require('../middleware/validacionID');
 const express = require('express');
 const router = express.Router();
 
@@ -27,7 +28,7 @@ router.post('/', autenticacionAdministrador, async (req, res) => {
 });
 
 // Endpoint para método PUT de HTTP (actualiza los datos de la categoría cuyo ID se indique)
-router.put('/:id', autenticacionAdministrador, async (req, res) => {
+router.put('/:id', [autenticacionAdministrador, validacionID], async (req, res) => {
   const { error } = validar(req.body);
   if(!error){
     const categoria = await Categoria.findByIdAndUpdate(req.params.id, { nombre: req.body.nombre, precio: req.body.precio }, {
@@ -44,7 +45,7 @@ router.put('/:id', autenticacionAdministrador, async (req, res) => {
 });
 
 // Endpoint para método DELETE de HTTP (remueve a la categoría cuyo ID se indique)
-router.delete('/:id', autenticacionAdministrador, async (req, res) => {
+router.delete('/:id', [autenticacionAdministrador, validacionID], async (req, res) => {
     const categoria = await Categoria.findByIdAndRemove(req.params.id);
     if (categoria){
       res.send(categoria);      
@@ -54,7 +55,7 @@ router.delete('/:id', autenticacionAdministrador, async (req, res) => {
 });
 
 // Endpoint para método GET de HTTP (lista a una sola categoría, determinada por el ID que se indique)
-router.get('/:id', async (req, res) => {
+router.get('/:id', validacionID, async (req, res) => {
     const categoria = await Categoria.findById(req.params.id);
     if (categoria){
         res.send(categoria);      

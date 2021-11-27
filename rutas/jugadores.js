@@ -1,6 +1,7 @@
 const autenticacionAdministrador = require('../middleware/autenticacionAdministrador');
 const Joi = require('joi');
 const autenticacionJugador = require('../middleware/autenticacionJugador');
+const validacionID = require('../middleware/validacionID');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const express = require('express');
@@ -54,7 +55,7 @@ router.post('/', async (req, res) => {
 });
 
 // Endpoint para método PUT de HTTP (actualiza los datos del jugador cuyo ID se indique)
-router.put('/:id', autenticacionAdministrador, async (req, res) => {
+router.put('/:id', [autenticacionAdministrador, validacionID], async (req, res) => {
     const { error } = validarPUT(req.body);
     if(!error){
         const jugador = await Jugador.findByIdAndUpdate(req.params.id,
@@ -72,7 +73,7 @@ router.put('/:id', autenticacionAdministrador, async (req, res) => {
 });
 
 // Endpoint para método DELETE de HTTP (remueve al jugador cuyo ID se indique)
-router.delete('/:id', autenticacionAdministrador, async (req, res) => {
+router.delete('/:id', [autenticacionAdministrador, validacionID], async (req, res) => {
     const jugador = await Jugador.findByIdAndRemove(req.params.id);
     if (jugador){
         res.send(jugador);
@@ -82,7 +83,7 @@ router.delete('/:id', autenticacionAdministrador, async (req, res) => {
 });
 
 // Endpoint para método GET de HTTP (lista a un solo jugador, determinado por el ID que se indique)
-router.get('/:id', async (req, res) => {
+router.get('/:id', validacionID, async (req, res) => {
     const jugador = await Jugador.findById(req.params.id);
     if (jugador){
         res.send(jugador);
