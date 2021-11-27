@@ -31,7 +31,8 @@ router.post('/', autenticacionJugador, async (req, res) => {
     const traje = await Traje.findById(req.body.trajeId);
     if(traje){
       if(traje.categoria.precio <= jugador.puntos){
-        if(!jugador.trajesCanjeados.find(traje._id)){
+        const busquedaTraje = await jugador.trajesCanjeados.find(traje._id);
+        if(!busquedaTraje){
           let canje = new Canje({
             jugador: {
                 _id: jugador._id,
