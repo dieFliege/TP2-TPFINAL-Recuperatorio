@@ -26,6 +26,10 @@ const esquemaJugador = new mongoose.Schema({
         required: true,
         min: MIN_PUNTOS,
         max: MAX_PUNTOS
+    },
+    trajesCanjeados: {
+        type: Array,
+        required: true
     }
 });
 

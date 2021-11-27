@@ -39,7 +39,8 @@ router.post('/', async (req, res) => {
             jugador = new Jugador({ 
                 alias: req.body.alias,
                 contrasenia: req.body.contrasenia,
-                puntos: PUNTOS_INICIALES
+                puntos: PUNTOS_INICIALES,
+                trajesCanjeados: []
             });
             const salt = await bcrypt.genSalt(10);
             jugador.contrasenia = await bcrypt.hash(jugador.contrasenia, salt);
