@@ -44,7 +44,7 @@ router.post('/', autenticacionJugador, async (req, res) => {
             fechaCanje: fechaDeCanje()
           });
           jugador.puntos = jugador.puntos - traje.categoria.precio;
-          jugador.trajesCanjeados.push({ trajeId: traje._id });
+          jugador.trajesCanjeados.push(traje._id);
           await jugador.save();
           await canje.save();
           res.send(canje);
