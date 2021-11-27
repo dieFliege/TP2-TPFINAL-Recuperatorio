@@ -1,4 +1,4 @@
-const autentication = require('../middleware/autenticacionAdministrador');
+const autenticacionAdministrador = require('../middleware/autenticacionAdministrador');
 const bcrypt = require('bcrypt');
 
 // Utilizamos el módulo lodash, para manipular objetos 
@@ -14,7 +14,7 @@ const {Administrador, validar} = require('../modelos/administrador');
 const ADMINISTRADOR_YA_REGISTRADO = 'El administrador ya está registrado';
 
 // Endpoint para método GET de HTTP (lista al administrador que está actualmente autenticado) 
-router.get('/yo', autentication, async (req, res) => {
+router.get('/yo', autenticacionAdministrador, async (req, res) => {
   const administrador = await Administrador.findById(req.administrador._id).select('-contrasenia');
   res.send(administrador);
 });

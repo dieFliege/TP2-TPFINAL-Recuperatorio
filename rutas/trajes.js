@@ -1,3 +1,4 @@
+const autenticacionAdministrador = require('../middleware/autenticacionAdministrador');
 const express = require('express');
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.get('/', async (req, res) => {
 });
 
 // Endpoint para método POST de HTTP (agrega un traje)
-router.post('/', async (req, res) => {
+router.post('/', autenticacionAdministrador, async (req, res) => {
     const { error } = validar(req.body);
     if(!error){
         const categoria = await Categoria.findById(req.body.categoriaId);
@@ -43,7 +44,7 @@ router.post('/', async (req, res) => {
 });
 
 // Endpoint para método PUT de HTTP (actualiza los datos del traje cuyo ID se indique)
-router.put('/:id', async (req, res) => {
+router.put('/:id', autenticacionAdministrador, async (req, res) => {
     const { error } = validar(req.body);
     if(!error){
         const categoria = await Categoria.findById(req.body.categoriaId);
@@ -74,7 +75,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Endpoint para método DELETE de HTTP (remueve al traje cuyo ID se indique)
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', autenticacionAdministrador, async (req, res) => {
     const traje = await Traje.findByIdAndRemove(req.params.id);
     if(traje){
         res.send(traje);

@@ -1,5 +1,6 @@
+const autenticacionAdministrador = require('../middleware/autenticacionAdministrador');
 const Joi = require('joi');
-const autentication = require('../middleware/autenticacionJugador');
+const autenticacionJugador = require('../middleware/autenticacionJugador');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const express = require('express');
@@ -9,12 +10,14 @@ const router = express.Router();
 const JUGADOR_YA_REGISTRADO = 'El jugador ya está registrado.';
 const JUGADOR_NO_EXISTE = 'No existe ningún jugador con el ID brindado.';
 const PUNTOS_INICIALES = 3000;
+const MIN_PUNTOS = 0;
+const MAX_PUNTOS = 150000;
 
 // Se importa el modelo del jugador 
 const {Jugador, validar} = require('../modelos/jugador'); 
 
 // Endpoint para método GET de HTTP (lista al jugador que está actualmente autenticado) 
-router.get('/yo', autentication, async (req, res) => {
+router.get('/yo', autenticacionJugador, async (req, res) => {
     const jugador = await Jugador.findById(req.jugador._id).select('-contrasenia');
     res.send(jugador);
   });
@@ -51,16 +54,15 @@ router.post('/', async (req, res) => {
 });
 
 // Endpoint para método PUT de HTTP (actualiza los datos del jugador cuyo ID se indique)
-router.put('/:id', async (req, res) => {
+router.put('/:id', autenticacionAdministrador, async (req, res) => {
     const { error } = validarPUT(req.body);
     if(!error){
         const jugador = await Jugador.findByIdAndUpdate(req.params.id,
             { 
-              alias: req.body.alias,
               puntos: req.body.puntos
             }, { new: true });
           if (jugador){
-              res.send(jugador);
+              res.send(_.pick(jugador, ['_id', 'alias', 'puntos']));
           } else {
               res.status(404).send(JUGADOR_NO_EXISTE);
           }
@@ -70,7 +72,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Endpoint para método DELETE de HTTP (remueve al jugador cuyo ID se indique)
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', autenticacionAdministrador, async (req, res) => {
     const jugador = await Jugador.findByIdAndRemove(req.params.id);
     if (jugador){
         res.send(jugador);
@@ -92,7 +94,7 @@ router.get('/:id', async (req, res) => {
 // Método para validar los datos del jugador que se ingresa (para el método PUT)
 function validarPUT(jugador) {
     const esquemaValido = Joi.object({
-        alias: Joi.string().min(5).max(32).required()
+        alias: Joi.number().min(MIN_PUNTOS).max(MAX_PUNTOS)
     });
     return esquemaValido.validate({ alias: jugador.alias });
 }

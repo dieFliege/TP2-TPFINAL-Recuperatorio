@@ -1,48 +1,47 @@
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
+const autenticacionAdministrador = require('../middleware/autenticacionAdministrador');
+const autenticacionJugador = require('../middleware/autenticacionJugador');
 const express = require('express');
 const router = express.Router();
 
 // Se importan los modelos del canje, el traje y del jugador  
-const {Canje, fechaDeCanje, validar} = require('../modelos/canje'); 
-const {Traje} = require('../modelos/traje'); 
-const {Jugador} = require('../modelos/jugador'); 
+const {Canje, fechaDeCanje} = require('../modelos/canje');
+const {Jugador} = require('../modelos/jugador');  
+const {Traje} = require('../modelos/traje');
 
 // Mensajes 
-const JUGADOR_INVALIDO = 'Jugador inválido.';
 const TRAJE_INVALIDO = 'Traje inválido.';
 const CANJE_NO_EXISTE = 'No existe ningún canje con el ID brindado.';
 
 // Endpoint para método GET de HTTP (lista a todos los canjes) 
-router.get('/', async (req, res) => {
+router.get('/', autenticacionAdministrador, async (req, res) => {
   const canjes = await Canje.find();
   res.send(canjes);
 });
 
 // Endpoint para método POST de HTTP (agrega un canje)
-router.post('/', async (req, res) => {
+router.post('/', autenticacionJugador, async (req, res) => {
   const { error } = validar(req.body);
   if(!error){
-    const jugador = await Jugador.findById(req.body.jugadorId);
-    if (jugador){
-      const traje = await Traje.findById(req.body.trajeId);
-      if(traje){
-          let canje = new Canje({
-              jugador: {
-                  _id: jugador._id,
-                  alias: jugador.alias
-              },
-              traje: {
-                  _id: traje._id,
-                  nombre: traje.nombre
-              },
-              fechaCanje: fechaDeCanje()
-          });
-          await canje.save();
-          res.send(canje);
-      } else {
-          res.status(400).send(TRAJE_INVALIDO);
-      }
+    const jugador = await Jugador.findById(req.jugador._id);
+    const traje = await Traje.findById(req.body.trajeId);
+    if(traje){
+        let canje = new Canje({
+            jugador: {
+                _id: jugador._id,
+                alias: jugador.alias
+            },
+            traje: {
+                _id: traje._id,
+                nombre: traje.nombre
+            },
+            fechaCanje: fechaDeCanje()
+        });
+        await canje.save();
+        res.send(canje);
     } else {
-        res.status(400).send(JUGADOR_INVALIDO);
+        res.status(400).send(TRAJE_INVALIDO);
     }
   } else {
     res.status(400).send(error.details[0].message);
@@ -50,7 +49,7 @@ router.post('/', async (req, res) => {
 });
 
 // Endpoint para método GET de HTTP (lista a un solo canje, determinado por el ID que se indique)
-router.get('/:id', async (req, res) => {
+router.get('/:id', autenticacionAdministrador, async (req, res) => {
     const canje = await Canje.findById(req.params.id);
     if (canje){
       res.send(canje);
@@ -58,6 +57,14 @@ router.get('/:id', async (req, res) => {
       res.status(404).send(CANJE_NO_EXISTE);
     }
 });
+
+// Método para validar los datos del canje que se ingresa (solo para el método POST)
+function validar(canje){
+  const esquemaValido = Joi.object({
+    trajeId: Joi.objectId().required()
+  });
+  return esquemaValido.validate({ trajeId: canje.trajeId });
+}
 
 // Se disponibiliza la ruta de canjes 
 module.exports = router; 
