@@ -8,6 +8,7 @@ const {Traje, validar} = require('../modelos/traje');
 const {Categoria} = require('../modelos/categoria');
 
 // Mensajes 
+const TRAJE_YA_EXISTIA = 'El traje ya existía.';
 const CATEGORIA_INVALIDA = 'Categoría inválida.';
 const TRAJE_NO_EXISTE = 'No existe ningún traje con el ID brindado.';
 
@@ -21,24 +22,29 @@ router.get('/', async (req, res) => {
 router.post('/', autenticacionAdministrador, async (req, res) => {
     const { error } = validar(req.body);
     if(!error){
-        const categoria = await Categoria.findById(req.body.categoriaId);
-        if (categoria){
-            const traje = new Traje({ 
-                nombre: req.body.nombre,
-                primeraAparicion: req.body.primeraAparicion,
-                anioAparicion: req.body.anioAparicion,
-                descripcion: req.body.descripcion,
-                poster: req.body.poster,
-                categoria: {
-                    _id: categoria._id,
-                    nombre: categoria.nombre,
-                    precio: categoria.precio
-                }
-            });
-            await traje.save();
-            res.send(traje);
+        let traje = await Traje.findOne({ nombre: req.body.nombre });
+        if(!traje){
+            const categoria = await Categoria.findById(req.body.categoriaId);
+            if (categoria){
+                traje = new Traje({ 
+                    nombre: req.body.nombre,
+                    primeraAparicion: req.body.primeraAparicion,
+                    anioAparicion: req.body.anioAparicion,
+                    descripcion: req.body.descripcion,
+                    poster: req.body.poster,
+                    categoria: {
+                        _id: categoria._id,
+                        nombre: categoria.nombre,
+                        precio: categoria.precio
+                    }
+                });
+                await traje.save();
+                res.send(traje);
+            } else {
+                res.status(400).send(CATEGORIA_INVALIDA);
+            }
         } else {
-            res.status(400).send(CATEGORIA_INVALIDA);
+            res.status(400).send(TRAJE_YA_EXISTIA);
         }
     } else {
         res.status(400).send(error.details[0].message);

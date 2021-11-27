@@ -12,6 +12,7 @@ const {esquemaCategoria} = require('./categoria');
 const esquemaTraje = new mongoose.Schema({
     nombre: {
         type: String,
+        unique: true,
         required: true,
         trim: true, 
         minlength: 1,
