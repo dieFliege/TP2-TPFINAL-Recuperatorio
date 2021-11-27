@@ -1,3 +1,4 @@
 {
-    "claveJWT": "spiderSuits_claveJWT"
+    "claveJWT": "spiderSuits_claveJWT",
+    "db": "spiderSuits_db"
 }
