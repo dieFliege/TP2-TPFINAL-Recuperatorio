@@ -1,3 +1,4 @@
+const Joi = require('joi');
 const autenticacionAdministrador = require('../middleware/autenticacionAdministrador');
 const validacionID = require('../middleware/validacionID');
 const express = require('express');
