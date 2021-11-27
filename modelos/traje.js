@@ -46,7 +46,7 @@ const esquemaTraje = new mongoose.Schema({
     categoria: { 
         type: esquemaCategoria,  
         required: true
-    },
+    }
 });
 
 // Modelo que define a la entidad del traje 
@@ -60,7 +60,7 @@ function validarTraje(traje){
         anioAparicion: Joi.string().min(4).max(4).required(),
         descripcion: Joi.string().max(1024).required(),
         poster: Joi.string().max(255).required(),
-        categoria: Joi.objectId().required()
+        categoriaId: Joi.objectId().required()
       });
     
       return esquemaValido.validate({ 

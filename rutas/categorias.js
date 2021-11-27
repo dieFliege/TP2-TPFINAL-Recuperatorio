@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 router.post('/', autenticacionAdministrador, async (req, res) => {
   const { error } = validar(req.body);
   if(!error){
-    let categoria = new Categoria({ nombre: req.body.nombre });
+    let categoria = new Categoria({ nombre: req.body.nombre, precio: req.body.precio });
     categoria = await categoria.save();
     res.send(categoria);
   } else {
@@ -30,7 +30,7 @@ router.post('/', autenticacionAdministrador, async (req, res) => {
 router.put('/:id', autenticacionAdministrador, async (req, res) => {
   const { error } = validar(req.body);
   if(!error){
-    const categoria = await Categoria.findByIdAndUpdate(req.params.id, { nombre: req.body.nombre }, {
+    const categoria = await Categoria.findByIdAndUpdate(req.params.id, { nombre: req.body.nombre, precio: req.body.precio }, {
       new: true
     });
     if (categoria){

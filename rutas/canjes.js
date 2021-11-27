@@ -11,6 +11,7 @@ const {Jugador} = require('../modelos/jugador');
 const {Traje} = require('../modelos/traje');
 
 // Mensajes 
+const PUNTOS_INSUFICIENTES = 'Puntos insuficientes.';
 const TRAJE_INVALIDO = 'Traje inválido.';
 const CANJE_NO_EXISTE = 'No existe ningún canje con el ID brindado.';
 
@@ -27,19 +28,25 @@ router.post('/', autenticacionJugador, async (req, res) => {
     const jugador = await Jugador.findById(req.jugador._id);
     const traje = await Traje.findById(req.body.trajeId);
     if(traje){
+      if(traje.categoria.precio <= jugador.puntos){
         let canje = new Canje({
-            jugador: {
-                _id: jugador._id,
-                alias: jugador.alias
-            },
-            traje: {
-                _id: traje._id,
-                nombre: traje.nombre
-            },
-            fechaCanje: fechaDeCanje()
+          jugador: {
+              _id: jugador._id,
+              alias: jugador.alias
+          },
+          traje: {
+              _id: traje._id,
+              nombre: traje.nombre
+          },
+          fechaCanje: fechaDeCanje()
         });
+        jugador.puntos = jugador.puntos - traje.categoria.precio;
+        await jugador.save();
         await canje.save();
         res.send(canje);
+      } else {
+        res.status(400).send(PUNTOS_INSUFICIENTES);
+      }
     } else {
         res.status(400).send(TRAJE_INVALIDO);
     }
