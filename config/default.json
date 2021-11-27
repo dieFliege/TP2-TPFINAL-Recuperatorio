@@ -1,4 +1,5 @@
 {
-    "claveJWT": "",
+    "claveJWTA": "",
+    "claveJWTJ": "",
     "db": "mongodb://localhost/spiderSuits"
 }

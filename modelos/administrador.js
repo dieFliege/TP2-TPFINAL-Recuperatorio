@@ -30,7 +30,7 @@ const esquemaAdministrador = new mongoose.Schema({
 
 // Método para generar un JWT en el momento que el administrador se autentique en la aplicación  
 esquemaAdministrador.methods.generateAuthToken = function() { 
-    return jwt.sign({ _id: this._id }, config.get('claveJWT'));
+    return jwt.sign({ _id: this._id }, config.get('claveJWTA'));
 }
 
 // Modelo que define a la entidad del administrador 
