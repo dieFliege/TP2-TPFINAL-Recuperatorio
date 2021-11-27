@@ -8,6 +8,7 @@ const PRECIO_MAX = 10000;
 const esquemaCategoria = new mongoose.Schema({
   nombre: {
     type: String,
+    unique: true,
     required: true,
     minlength: 1,
     maxlength: 16
