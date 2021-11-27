@@ -29,7 +29,7 @@ const esquemaJugador = new mongoose.Schema({
     },
     trajesCanjeados: {
         type: Array,
-        required: true
+        default: []
     }
 });
 

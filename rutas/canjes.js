@@ -31,8 +31,7 @@ router.post('/', autenticacionJugador, async (req, res) => {
     const traje = await Traje.findById(req.body.trajeId);
     if(traje){
       if(traje.categoria.precio <= jugador.puntos){
-        const busquedaTraje = await jugador.trajesCanjeados.find(traje._id);
-        if(!busquedaTraje){
+        if(!jugador.trajesCanjeados.includes(traje._id)){
           let canje = new Canje({
             jugador: {
                 _id: jugador._id,
@@ -45,7 +44,7 @@ router.post('/', autenticacionJugador, async (req, res) => {
             fechaCanje: fechaDeCanje()
           });
           jugador.puntos = jugador.puntos - traje.categoria.precio;
-          jugador.trajesCanjeados.push(traje._id);
+          jugador.trajesCanjeados.push({ trajeId: traje._id });
           await jugador.save();
           await canje.save();
           res.send(canje);
