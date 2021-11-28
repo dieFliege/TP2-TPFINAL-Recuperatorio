@@ -34,7 +34,8 @@ router.post('/', autenticacionAdministrador, async (req, res) => {
                     poster: req.body.poster,
                     categoria: {
                         _id: categoria._id,
-                        nombre: categoria.nombre
+                        nombre: categoria.nombre,
+                        precio: categoria.precio,
                     }
                 });
                 await traje.save();
@@ -65,7 +66,8 @@ router.put('/:id', [autenticacionAdministrador, validacionID], async (req, res) 
                 poster: req.body.poster,
                 categoria: {
                   _id: categoria._id,
-                  nombre: categoria.nombre
+                  nombre: categoria.nombre,
+                  precio: categoria.precio,
                 }
             }, {new: true});
             if(traje){ 
