@@ -5,9 +5,6 @@ const mongoose = require('mongoose');
 const PRECIO_MIN = 1000;
 const PRECIO_MAX = 10000;
 
-// La categoría es parte de la definición del modelo del traje 
-const {esquemaCategoria} = require('./categoria');
-
 // Esquema del traje  
 const esquemaTraje = new mongoose.Schema({
     nombre: {
@@ -46,13 +43,14 @@ const esquemaTraje = new mongoose.Schema({
     },
     categoria: {
         type: new mongoose.Schema({
-            precio: {
-                type: Number,
+            nombre: {
+                type: String,
                 required: true,
-                min: PRECIO_MIN,
-                max: PRECIO_MAX
+                unique: true,
+                minlength: 1,
+                maxlength: 16
               }
-          }),
+        }),
         required: true
     }
 });
