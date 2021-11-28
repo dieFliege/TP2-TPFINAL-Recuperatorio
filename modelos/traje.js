@@ -44,15 +44,10 @@ const esquemaTraje = new mongoose.Schema({
         trim: true, 
         maxlength: 255
     },
-    categoria: {
-        type: String,
-        minlength: 1,
-        maxlength: 16
-      },
-      precio: {
-        type: Number,
+    categoria: { 
+        type: esquemaCategoria,  
         required: true
-      }
+    }
 });
 
 // Modelo que define a la entidad del traje 
@@ -65,7 +60,8 @@ function validarTraje(traje){
         primeraAparicion: Joi.string().min(1).max(64).required(),
         anioAparicion: Joi.string().min(4).max(4).required(),
         descripcion: Joi.string().max(1024).required(),
-        poster: Joi.string().max(255).required()
+        poster: Joi.string().max(255).required(),
+        categoriaId: Joi.objectId().required()
       });
     
       return esquemaValido.validate({ 
@@ -73,7 +69,8 @@ function validarTraje(traje){
           primeraAparicion: traje.primeraAparicion,  
           anioAparicion: traje.anioAparicion,
           descripcion: traje.descripcion,
-          poster: traje.poster
+          poster: traje.poster,
+          categoriaId: traje.categoriaId
         });
 }
 
