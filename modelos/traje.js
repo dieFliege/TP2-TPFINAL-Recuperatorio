@@ -48,7 +48,8 @@ const esquemaTraje = new mongoose.Schema({
                 required: true,
                 minlength: 1,
                 maxlength: 16,
-                sparse: true
+                sparse: true,
+                unique: false
               },
               precio: {
                 type: Number,
