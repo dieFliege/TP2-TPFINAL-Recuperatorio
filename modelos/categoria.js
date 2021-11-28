@@ -9,6 +9,7 @@ const esquemaCategoria = new mongoose.Schema({
   nombre: {
     type: String,
     required: true,
+    unique: true,
     minlength: 1,
     maxlength: 16
   },

@@ -28,15 +28,15 @@ router.post('/', autenticacionAdministrador, async (req, res) => {
             if (categoria){
                 traje = new Traje({ 
                     nombre: req.body.nombre,
-                    categoria: {
-                        _id: categoria._id,
-                        nombre: categoria.nombre,
-                        precio: categoria.precio
-                    },
                     primeraAparicion: req.body.primeraAparicion,
                     anioAparicion: req.body.anioAparicion,
                     descripcion: req.body.descripcion,
                     poster: req.body.poster,
+                    categoria: {
+                        _id: categoria._id,
+                        nombre: categoria.nombre,
+                        precio: categoria.precio
+                    }
                 });
                 await traje.save();
                 res.send(traje);
