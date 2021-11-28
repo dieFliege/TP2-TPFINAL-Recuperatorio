@@ -2,6 +2,9 @@ const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const mongoose = require('mongoose');
 
+const PRECIO_MIN = 1000;
+const PRECIO_MAX = 10000;
+
 // La categoría es parte de la definición del modelo del traje 
 const {esquemaCategoria} = require('./categoria');
 
@@ -42,12 +45,15 @@ const esquemaTraje = new mongoose.Schema({
         maxlength: 255
     },
     categoria: {
-        precio: {
-            type: Number,
-            required: true,
-            min: PRECIO_MIN,
-            max: PRECIO_MAX
-        }
+        type: new mongoose.Schema({
+            precio: {
+                type: Number,
+                required: true,
+                min: PRECIO_MIN,
+                max: PRECIO_MAX
+              }
+          }),
+        required: true
     }
 });
 
