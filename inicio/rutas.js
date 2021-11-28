@@ -5,7 +5,7 @@ const trajes = require('../rutas/trajes');
 const canjes = require('../rutas/canjes');
 const administradores = require('../rutas/administradores');
 const autenticacionJugador = require('../rutas/autenticacionJugador');
-const autenicacionAdministrador = require('../rutas/autenticacionAdministrador');
+const autenticacionAdministrador = require('../rutas/autenticacionAdministrador');
 
 // Se disponibilizan todas las rutas 
 module.exports = function(app) {
@@ -16,5 +16,5 @@ module.exports = function(app) {
   app.use('/api/canjes', canjes);
   app.use('/api/administradores', administradores);
   app.use('/api/autenticacionJugador', autenticacionJugador);
-  app.use('/api/autenicacionAdministrador', autenicacionAdministrador);
+  app.use('/api/autenticacionAdministrador', autenticacionAdministrador);
 }
