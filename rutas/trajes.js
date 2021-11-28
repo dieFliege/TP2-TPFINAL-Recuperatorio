@@ -32,11 +32,8 @@ router.post('/', autenticacionAdministrador, async (req, res) => {
                     anioAparicion: req.body.anioAparicion,
                     descripcion: req.body.descripcion,
                     poster: req.body.poster,
-                    categoria: {
-                        _id: categoria._id,
-                        nombre: categoria.nombre,
-                        precio: categoria.precio,
-                    }
+                    categoria: categoria.nombre,
+                    precio: categoria.precio
                 });
                 await traje.save();
                 res.send(traje);
@@ -64,11 +61,8 @@ router.put('/:id', [autenticacionAdministrador, validacionID], async (req, res) 
                 anioAparicion: req.body.anioAparicion,
                 descripcion: req.body.descripcion,
                 poster: req.body.poster,
-                categoria: {
-                  _id: categoria._id,
-                  nombre: categoria.nombre,
-                  precio: categoria.precio,
-                }
+                categoria: categoria.nombre,
+                precio: categoria.precio
             }, {new: true});
             if(traje){ 
                 res.send(traje); 

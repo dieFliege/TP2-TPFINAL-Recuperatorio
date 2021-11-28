@@ -2,12 +2,6 @@ const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const mongoose = require('mongoose');
 
-/**
- * Se importa el esquema del traje 
- * La categoría es parte de la definición del modelo del traje 
- */
-const {esquemaCategoria} = require('./categoria');
-
 // Esquema del traje  
 const esquemaTraje = new mongoose.Schema({
     nombre: {
@@ -44,10 +38,15 @@ const esquemaTraje = new mongoose.Schema({
         trim: true, 
         maxlength: 255
     },
-    categoria: { 
-        type: esquemaCategoria,  
+    categoria: {
+        type: String,
+        minlength: 1,
+        maxlength: 16
+      },
+      precio: {
+        type: Number,
         required: true
-    }
+      }
 });
 
 // Modelo que define a la entidad del traje 
@@ -60,8 +59,7 @@ function validarTraje(traje){
         primeraAparicion: Joi.string().min(1).max(64).required(),
         anioAparicion: Joi.string().min(4).max(4).required(),
         descripcion: Joi.string().max(1024).required(),
-        poster: Joi.string().max(255).required(),
-        categoriaId: Joi.objectId().required()
+        poster: Joi.string().max(255).required()
       });
     
       return esquemaValido.validate({ 
@@ -69,8 +67,7 @@ function validarTraje(traje){
           primeraAparicion: traje.primeraAparicion,  
           anioAparicion: traje.anioAparicion,
           descripcion: traje.descripcion,
-          poster: traje.poster,
-          categoriaId: traje.categoriaId
+          poster: traje.poster
         });
 }
 
