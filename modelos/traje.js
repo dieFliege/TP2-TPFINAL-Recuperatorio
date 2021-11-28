@@ -44,10 +44,19 @@ const esquemaTraje = new mongoose.Schema({
         trim: true, 
         maxlength: 255
     },
-    categoria: { 
+    categoriaId: { 
         type: esquemaCategoria,  
         required: true
-    }
+    },
+    categoria: {
+        type: String,
+        minlength: 1,
+        maxlength: 16
+      },
+      precio: {
+        type: Number,
+        required: true
+      }
 });
 
 // Modelo que define a la entidad del traje 
