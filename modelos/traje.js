@@ -41,9 +41,13 @@ const esquemaTraje = new mongoose.Schema({
         trim: true, 
         maxlength: 255
     },
-    categoria: { 
-        type: esquemaCategoria,  
-        required: true
+    categoria: {
+        precio: {
+            type: Number,
+            required: true,
+            min: PRECIO_MIN,
+            max: PRECIO_MAX
+        }
     }
 });
 
