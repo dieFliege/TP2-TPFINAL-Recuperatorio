@@ -84,7 +84,7 @@ router.delete('/:id', [autenticacionAdministrador, validacionID], async (req, re
 });
 
 // Endpoint para método GET de HTTP (lista a un solo jugador, determinado por el ID que se indique)
-router.get('/:id', validacionID, async (req, res) => {
+router.get('/:id', [autenticacionAdministrador, validacionID], async (req, res) => {
     const jugador = await Jugador.findById(req.params.id);
     if (jugador){
         res.send(jugador);
