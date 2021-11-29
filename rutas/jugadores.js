@@ -24,7 +24,7 @@ router.get('/yo', autenticacionJugador, async (req, res) => {
   });
 
 // Endpoint para método GET de HTTP (lista a todos los jugadores) 
-router.get('/', async (req, res) => {
+router.get('/', autenticacionJugador, async (req, res) => {
     const jugador = await Jugador.find().sort('alias');
     res.send(jugador);
 });
